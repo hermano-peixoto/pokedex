@@ -65,6 +65,11 @@ jobs:
         env:
           SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
           SONAR_HOST_URL: http://localhost:9000
+        with:
+          projectBaseDir: ./
+          args: >
+            -Dsonar.inclusions=**/*.ts,**/*.html,**/*.css,**/*.scss
+            -Dsonar.exclusions=**/*.spec.ts,**/node_modules/**
       - name: Download and archive analysis report
         run: |
           curl -u admin:admin "http://localhost:9000/api/issues/search?componentKeys=pokedex" -o sonarqube-analysis-report.json
