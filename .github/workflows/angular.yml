@@ -57,6 +57,11 @@ jobs:
           unzip sonar-scanner.zip
           sudo mv sonar-scanner-5.0.1.3006-linux /opt/sonar-scanner
           echo "export PATH=\$PATH:/opt/sonar-scanner/bin" >> $GITHUB_ENV
+      - name: Install Logback
+        run: |
+          sudo wget https://repo1.maven.org/maven2/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar -P /opt/sonar-scanner/lib/
+          sudo wget https://repo1.maven.org/maven2/ch/qos/logback/logback-core/1.2.3/logback-core-1.2.3.jar -P /opt/sonar-scanner/lib/
+          sudo wget https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar -P /opt/sonar-scanner/lib/
       - name: Wait for SonarQube to be fully ready
         run: |
           echo "Waiting for SonarQube to fully start..."
