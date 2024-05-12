@@ -24,14 +24,14 @@ jobs:
         id: cache-node-modules
         uses: actions/cache@v4
         with:
-          path: ~/.npm
+          path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
       - name: Instalar dependências
         run: npm install
-      - name: Instalar Angular CLI
-        run: npm install -g @angular/cli
+      - name: Instalar Angular CLI (localmente)
+        run: npm install @angular/cli
 
   build:
     needs: setup
@@ -46,10 +46,10 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v4
         with:
-          path: ~/.npm
+          path: node_modules
           key: ${{ needs.setup.outputs.cache-key }}
       - name: Build Angular application
-        run: ng build --prod
+        run: npx ng build --prod
 
   static-code-analysis:
     needs: build
