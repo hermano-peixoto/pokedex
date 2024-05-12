@@ -70,7 +70,8 @@ jobs:
           sonar-scanner -X \
             -Dsonar.projectKey=pokedex \
             -Dsonar.sources=src \
-            -Dsonar.exclusions=**/*.test.js,**/node_modules/** \
+            -Dsonar.inclusions=**/*.ts,**/*.html,**/*.css,**/*.scss \
+            -Dsonar.exclusions=**/*.spec.ts,**/node_modules/** \
             -Dsonar.host.url=http://localhost:9000 \
             -Dsonar.login=$SONAR_TOKEN
       - name: Download and archive analysis report
