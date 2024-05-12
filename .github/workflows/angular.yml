@@ -1,0 +1,83 @@
+
+name: React CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      cache-key: ${{ steps.cache-keys.outputs.key }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Cache node modules
+        id: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Instalar dependências
+        run: npm install
+      - name: Instalar Angular CLI
+        run: npm install -g @angular/cli
+
+  sonarqube-analysis:
+    needs: setup
+    runs-on: ubuntu-latest
+    services:
+      sonarqube:
+        image: sonarqube
+        ports:
+          - 9000:9000
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Sonar-Scanner and jq
+        run: |
+          sudo apt-get update && sudo apt-get install -y jq
+          curl -Lo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+          unzip sonar-scanner.zip
+          sudo mv sonar-scanner-5.0.1.3006-linux /opt/sonar-scanner
+          echo "export PATH=\$PATH:/opt/sonar-scanner/bin" >> $GITHUB_ENV
+      - name: Wait for SonarQube to be fully ready
+        run: |
+          echo "Waiting for SonarQube to fully start..."
+          until [[ "$(curl -s 'http://localhost:9000/api/system/status' | jq -r .status)" == "UP" ]]; do
+            echo "SonarQube is not ready yet..."
+            sleep 10
+          done
+          echo "SonarQube is ready."
+      - name: Configure SonarQube Project and User
+        run: |
+          curl -u admin:admin -X POST "http://localhost:9000/api/projects/create" -d "name=pokedex" -d "project=pokedex"
+          curl -u admin:admin -X POST "http://localhost:9000/api/users/create" -d "login=sonaruser" -d "password=sonarpass" -d "name=Sonar User"
+          TOKEN=$(curl -u admin:admin -X POST "http://localhost:9000/api/user_tokens/generate" -d "login=sonaruser" -d "name=token-for-github-actions" | jq -r '.token')
+          echo "SONAR_TOKEN=$TOKEN" >> $GITHUB_ENV
+      - name: Run SonarQube analysis
+        run: |
+          export PATH=$PATH:/opt/sonar-scanner/bin
+          sonar-scanner -X \
+            -Dsonar.projectKey=pokedex \
+            -Dsonar.sources=src \
+            -Dsonar.exclusions=**/*.test.js,**/node_modules/** \
+            -Dsonar.host.url=http://localhost:9000 \
+            -Dsonar.login=$SONAR_TOKEN
+      - name: Download and archive analysis report
+        run: |
+          curl -u admin:admin "http://localhost:9000/api/issues/search?componentKeys=my-react-app" -o sonarqube-analysis-report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sonarqube-analysis-report
+          path: sonarqube-analysis-report.json
+
