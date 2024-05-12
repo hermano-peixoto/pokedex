@@ -76,7 +76,7 @@ jobs:
             -Dsonar.login=$SONAR_TOKEN
       - name: Download and archive analysis report
         run: |
-          curl -u admin:admin "http://localhost:9000/api/issues/search?componentKeys=my-react-app" -o sonarqube-analysis-report.json
+          curl -u admin:admin "http://localhost:9000/api/issues/search?componentKeys=pokedex" -o sonarqube-analysis-report.json
       - uses: actions/upload-artifact@v4
         with:
           name: sonarqube-analysis-report
