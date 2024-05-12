@@ -28,10 +28,6 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - name: Instalar dependências
-        run: npm install
-      - name: Instalar Angular CLI (localmente)
-        run: npm install @angular/cli
 
   build:
     needs: setup
@@ -48,7 +44,7 @@ jobs:
           path: node_modules
           key: ${{ needs.setup.outputs.cache-key }}
       - name: Build Angular application
-        run: npx ng build --prod
+        run: npm run build -- --prod
 
   static-code-analysis:
     needs: build
