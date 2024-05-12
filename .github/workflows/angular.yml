@@ -12,7 +12,7 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      cache-key: ${{ steps.cache-node-modules.outputs.cache-key }}
+      cache-key: ${{ steps.cache-node-modules.outputs.key }}  # Aqui deve ser garantido que esse output realmente está sendo definido
     steps:
       - uses: actions/checkout@v4
       - name: Set up Node.js
@@ -25,7 +25,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}  # Essa é a chave que será usada
           restore-keys: |
             ${{ runner.os }}-node-
       - name: Instalar dependências
@@ -46,7 +46,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: ${{ needs.setup.outputs.cache-key }}
+          key: ${{ needs.setup.outputs.cache-key }}  # Usando a chave do output do setup
       - name: Build Angular application
         run: npx ng build --prod
 
