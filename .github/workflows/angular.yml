@@ -12,7 +12,7 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      cache-key: ${{ steps.cache-keys.outputs.key }}
+      cache-key: ${{ steps.cache-node-modules.outputs.cache-hit }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Node.js
