@@ -53,7 +53,6 @@ jobs:
             sleep 10
           done
           echo "SonarQube is ready."
-          curl -u admin:admin -s 'http://localhost:9000/api/system/health' | jq .
       - name: Configure SonarQube Project and User
         run: |
           curl -u admin:admin -X POST "http://localhost:9000/api/projects/create" -d "name=pokedex" -d "project=pokedex"
@@ -65,12 +64,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
           SONAR_HOST_URL: http://localhost:9000
-        with:
-          projectBaseDir: ./
-          args: >
-            -Dsonar.projectKey=pokedex 
-            -Dsonar.inclusions=**/*.ts,**/*.html,**/*.css,**/*.scss
-            -Dsonar.exclusions=**/*.spec.ts,**/node_modules/**
       - name: Download and archive analysis report
         run: |
           curl -u admin:admin "http://localhost:9000/api/issues/search?componentKeys=pokedex" -o sonarqube-analysis-report.json
