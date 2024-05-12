@@ -1,5 +1,5 @@
 
-name: React CI
+name: Angular CI
 
 on:
   push:
@@ -44,7 +44,6 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - name: Cache node modules
-        id: cache-node-modules
         uses: actions/cache@v4
         with:
           path: ~/.npm
