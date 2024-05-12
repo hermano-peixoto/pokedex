@@ -44,7 +44,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # Disabling shallow clones is recommended for improving the relevancy of reporting
           fetch-depth: 0
       - name: Wait for SonarQube to be fully ready
         run: |
@@ -54,6 +53,7 @@ jobs:
             sleep 10
           done
           echo "SonarQube is ready."
+          curl -s 'http://localhost:9000/api/system/health' | jq .
       - name: Configure SonarQube Project and User
         run: |
           curl -u admin:admin -X POST "http://localhost:9000/api/projects/create" -d "name=pokedex" -d "project=pokedex"
