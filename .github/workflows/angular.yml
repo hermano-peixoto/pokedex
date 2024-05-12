@@ -64,10 +64,11 @@ jobs:
         env:
           SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
           SONAR_HOST_URL: http://sonarqube:9000
-      - name: Download and archive analysis report
+      - name: Print and download analysis report
         run: |
-          curl -u $SONAR_TOKEN: "http://localhost:9000/api/issues/search?componentKeys=pokedex&types=BUG,VULNERABILITY" -o sonarqube-analysis-report.json
-      - uses: actions/upload-artifact@v4
+          curl -s -u $SONAR_TOKEN: "http://localhost:9000/api/issues/search?componentKeys=pokedex" | tee sonarqube-analysis-report.json | jq
+      - name: Upload analysis report
+        uses: actions/upload-artifact@v4
         with:
           name: sonarqube-analysis-report
           path: sonarqube-analysis-report.json
