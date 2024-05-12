@@ -1,0 +1,28 @@
+
+<div id="backdrop" [ngClass]="{escondido: !aberto}" (click)="clicado.emit()"></div>
+<div id="container">
+    <div id="dados">
+        <div class="area">
+            <app-cartao-pokemon
+            [fullData]="pokemon"
+            [selecionado]="true"
+            >
+            </app-cartao-pokemon>
+        </div>
+        <div class="area">
+            <p><span class="etiqueta">Tipo</span><span class="tipo" *ngFor="let tipo of pokemon?.types">{{ tipo.type.name }}</span></p>
+            <p><span class="etiqueta">Altura</span>{{ pokemon?.height }}'</p>
+            <p><span class="etiqueta">Peso</span>{{ pokemon?.weight }} lbs.</p>
+        </div>
+        <div class="area">
+            <div id="descricaoContainer">
+                <div></div>
+                <p>{{ descricao }}</p>
+                <div></div>
+            </div>
+        </div>
+    </div>
+    <button (click)="clicado.emit()">
+        <img src="./../../../assets/img/flecha.png" alt="" [ngClass]="{girar: aberto}" />
+    </button>
+</div>

@@ -1,0 +1,21 @@
+
+<main id="container">
+    <app-detalhe
+    [pokemon]="pokemonSelecionado"
+    (clicado)="mudarEstadoDetalhe()"
+    [aberto]="detalhe"
+    [ngClass]="{aberto: detalhe}"
+    ></app-detalhe>
+    <app-foto-pokemon
+    [pokemon]="pokemonSelecionado"
+    [ngClass]="{aberto: detalhe}"
+    ></app-foto-pokemon>
+    <div id="cartoesContainer" #cartoes (scroll)="onScroll($event)">
+        <app-cartao-pokemon *ngFor="let pokemon of listaPokemon"
+        [data]="pokemon"
+        [selecionado]="pokemonSelecionado?.name === pokemon.name"
+        (clicado)="cartaoClicado($event)"
+        >
+        </app-cartao-pokemon>
+    </div>
+</main>
