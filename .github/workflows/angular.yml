@@ -62,9 +62,10 @@ jobs:
           echo "SONAR_TOKEN=$TOKEN" >> $GITHUB_ENV
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
+          SONAR_HOST_URL: http://localhost:9000
         with:
-          host: http://localhost:9000
-          login: ${{ env.SONAR_TOKEN }}
           projectKey: pokedex
           projectName: pokedex
           projectBaseDir: './'
