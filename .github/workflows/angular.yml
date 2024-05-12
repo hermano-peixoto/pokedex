@@ -68,6 +68,7 @@ jobs:
         with:
           projectBaseDir: ./
           args: >
+            -Dsonar.projectKey=pokedex 
             -Dsonar.inclusions=**/*.ts,**/*.html,**/*.css,**/*.scss
             -Dsonar.exclusions=**/*.spec.ts,**/node_modules/**
       - name: Download and archive analysis report
